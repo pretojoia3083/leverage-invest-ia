@@ -1,0 +1,41 @@
+{
+  "users": {
+    "0b6f6d3b": {
+      "name": "Trader #26006210",
+      "mt5_login": "26006210",
+      "mt5_password": "Michelle82@#",
+      "mt5_server": "VantageMarkets-Demo",
+      "plan": "free",
+      "active": true,
+      "created_at": "2026-09-15T22:27:09.660549",
+      "balance": 2358.18,
+      "equity": 2213.8
+    }
+  },
+  "trades": {
+    "0b6f6d3b": []
+  },
+  "configs": {
+    "0b6f6d3b": {
+      "symbol": "XAUUSD",
+      "lot": 0.01,
+      "sl_pips": 50,
+      "tp_pips": 100,
+      "martingale": false,
+      "mart_mult": 2.0,
+      "mart_steps": 3,
+      "soros": false,
+      "soros_mult": 1.5,
+      "soros_steps": 3,
+      "wins": 0,
+      "losses": 0,
+      "profit": 0.0
+    }
+  },
+  "robots": {
+    "0b6f6d3b": {
+      "active": true,
+      "symbol": "BTCUSD"
+    }
+  }
+}

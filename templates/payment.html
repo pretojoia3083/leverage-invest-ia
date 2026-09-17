@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVERAGE IA - Assinar</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .payment-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--bg) 50%, var(--navy) 100%);
+            padding: 20px;
+        }
+        .payment-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 35px 30px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        .payment-card img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+        .payment-card h1 {
+            font-size: 22px;
+            color: var(--orange);
+            margin-bottom: 5px;
+        }
+        .payment-card .subtitle {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+        .plan-box {
+            background: var(--bg);
+            border: 2px solid var(--orange);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .plan-name {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        .plan-price {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--orange);
+        }
+        .plan-period {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .plan-features {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 13px;
+        }
+        .plan-features li {
+            list-style: none;
+            padding: 5px 0;
+            color: var(--text);
+        }
+        .plan-features li::before {
+            content: "✓ ";
+            color: var(--green);
+            font-weight: 700;
+        }
+        .payment-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .payment-tab {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg);
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            transition: 0.2s;
+        }
+        .payment-tab.active {
+            border-color: var(--orange);
+            color: var(--orange);
+            background: rgba(255, 107, 0, 0.1);
+        }
+        .payment-method {
+            display: none;
+        }
+        .payment-method.active {
+            display: block;
+        }
+        .pix-box {
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .pix-key {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--orange);
+            background: var(--navy-dark);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            word-break: break-all;
+            border: 1px solid var(--card-border);
+        }
+        .pix-key:hover {
+            border-color: var(--orange);
+        }
+        .pix-hint {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        .card-form {
+            text-align: left;
+        }
+        .card-form .form-group {
+            margin-bottom: 12px;
+        }
+        .btn-pay {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--text-dim);
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .btn-back:hover {
+            color: var(--orange);
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: var(--text-dim);
+            font-size: 12px;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .divider::before { margin-right: 10px; }
+        .divider::after { margin-left: 10px; }
+    </style>
+</head>
+<body class="payment-page">
+    <div class="payment-card">
+        <img src="/static/img/logo.png" alt="LEVERAGE IA">
+        <h1>LEVERAGE INVEST IA</h1>
+        <p class="subtitle">Ative seu robo para operar automaticamente</p>
+
+        <div class="plan-box">
+            <div class="plan-name">PLANO MENSAL</div>
+            <div class="plan-price">R$ 49,90</div>
+            <div class="plan-period">por mes</div>
+            <ul class="plan-features">
+                <li>EA Leverage IA completo</li>
+                <li>Trailing stop avancado</li>
+                <li>Auto lot (gestao de risco)</li>
+                <li>Suporte via WhatsApp</li>
+                <li>Atualizacoes inclusas</li>
+            </ul>
+        </div>
+
+        <div class="payment-tabs">
+            <div class="payment-tab active" onclick="showPix()">PIX</div>
+            <div class="payment-tab" onclick="showCard()">CARTAO</div>
+        </div>
+
+        <div id="pixMethod" class="payment-method active">
+            <div class="pix-box">
+                <div class="pix-hint">Chave PIX (Copia e Cola):</div>
+                <div class="pix-key" onclick="copyPix()" id="pixKey">
+                    30863136842
+                </div>
+                <div class="pix-hint">CPF: 30863136842 | Nome: Luis Renato de Souza | Banco Inter</div>
+                <div class="pix-hint">Clique para copiar. Envie o comprovante no WhatsApp.</div>
+            </div>
+            <button class="btn btn-primary btn-pay" onclick="copyPix()">COPIAR CHAVE PIX</button>
+        </div>
+
+        <div id="cardMethod" class="payment-method">
+            <div class="card-form">
+                <div class="form-group">
+                    <label>Numero do Cartao</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+                <div class="form-group">
+                    <label>Validade</label>
+                    <input type="text" placeholder="MM/AA" maxlength="5">
+                </div>
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="text" placeholder="000" maxlength="4">
+                </div>
+                <div class="form-group">
+                    <label>Nome no Cartao</label>
+                    <input type="text" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label>CPF</label>
+                    <input type="text" placeholder="000.000.000-00" maxlength="14">
+                </div>
+            </div>
+            <button class="btn btn-primary btn-pay" onclick="alert('Redirecionando para pagamento...')">PAGAR COM CARTAO</button>
+        </div>
+
+        <div class="divider">ou</div>
+
+        <p class="pix-hint">Apos o pagamento, envie o comprovante e receba sua chave por WhatsApp</p>
+        <a href="/dashboard" class="btn-back">Voltar ao dashboard</a>
+    </div>
+
+    <script>
+    function showPix() {
+        document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.payment-tab')[0].classList.add('active');
+        document.getElementById('pixMethod').classList.add('active');
+    }
+    function showCard() {
+        document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.payment-tab')[1].classList.add('active');
+        document.getElementById('cardMethod').classList.add('active');
+    }
+    function copyPix() {
+        const key = document.getElementById('pixKey').textContent;
+        navigator.clipboard.writeText(key).then(() => {
+            alert('Chave PIX copiada! Envie o comprovante no WhatsApp.');
+        });
+    }
+    </script>
+</body>
+</html>
