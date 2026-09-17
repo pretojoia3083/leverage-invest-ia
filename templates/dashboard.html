@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVERAGE INVEST IA</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/static/img/logo.png" alt="Logo" class="sidebar-logo">
+                <span>LEVERAGE IA</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard"><span>&#9632;</span> Dashboard</a>
+                <a href="#" class="nav-item" data-section="robot"><span>&#9654;</span> Robo</a>
+                <a href="#" class="nav-item" data-section="positions"><span>&#9776;</span> Posicoes</a>
+                <a href="#" class="nav-item" data-section="history"><span>&#9783;</span> Historico</a>
+                <a href="#" class="nav-item" data-section="license"><span>&#9830;</span> Minha Licenca</a>
+                <a href="#" class="nav-item" data-section="connect"><span>&#9742;</span> Minha Conta</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout-btn"><span>&#10550;</span> Sair</a>
+            </div>
+        </aside>
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+                    <h2 id="section-title">Dashboard</h2>
+                </div>
+                <div class="topbar-right">
+                    <span class="user-name">{{ user.name }}</span>
+                    <div class="status-dot" id="statusDot"></div>
+                </div>
+            </header>
+            <div class="content">
+                <section id="section-dashboard" class="section active">
+                    <div class="stats-grid">
+                        <div class="stat-card"><span class="stat-label">Saldo</span><span class="stat-value" id="statBalance">$0.00</span></div>
+                        <div class="stat-card"><span class="stat-label">Equity</span><span class="stat-value" id="statEquity">$0.00</span></div>
+                        <div class="stat-card"><span class="stat-label">Lucro</span><span class="stat-value" id="statProfit">$0.00</span></div>
+                        <div class="stat-card"><span class="stat-label">Posicoes</span><span class="stat-value" id="statPositions">0</span></div>
+                        <div class="stat-card"><span class="stat-label">Win / Loss</span><span class="stat-value" id="statWinLoss">0 / 0</span></div>
+                        <div class="stat-card"><span class="stat-label">Robo</span><span class="stat-value" id="statRobot">OFF</span></div>
+                    </div>
+                </section>
+                <section id="section-robot" class="section">
+                    <div class="card">
+                        <h3>ROBO LEVERAGE IA</h3>
+                        <p class="text-dim">Ligue para o EA comecar a operar</p>
+                        <div id="robotWarning" style="display:none;">
+                            <div class="alert alert-warning">Licenca inativa ou expirada. Renove seu plano.</div>
+                        </div>
+                        <div id="robotNoMt5" style="display:none;">
+                            <div class="alert alert-warning">Vincule a conta MT5 em Minha Conta primeiro</div>
+                        </div>
+                        <div class="robot-status-card">
+                            <div class="robot-indicator" id="robotIndicator"></div>
+                            <div class="robot-info">
+                                <span class="robot-label" id="robotStatusText">DESLIGADO</span>
+                                <span class="robot-symbol" id="robotCurrentSymbol">-</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Par de Moedas</label>
+                            <select id="robotSymbolSelect">
+                                <option value="XAUUSD">XAUUSD (Ouro)</option>
+                                <option value="BTCUSD">BTCUSD (Bitcoin)</option>
+                                <option value="EURUSD">EURUSD</option>
+                                <option value="GBPUSD">GBPUSD</option>
+                                <option value="USDJPY">USDJPY</option>
+                                <option value="US30">US30</option>
+                                <option value="NAS100">NAS100</option>
+                                <option value="SPX500">SPX500</option>
+                            </select>
+                        </div>
+                        <div class="robot-actions">
+                            <button class="btn btn-success btn-lg" id="btnStartRobot" onclick="startRobot()">&#9654; LIGAR ROBO</button>
+                            <button class="btn btn-danger btn-lg" id="btnStopRobot" onclick="stopRobot()" style="display:none;">&#9632; DESLIGAR ROBO</button>
+                        </div>
+                    </div>
+                </section>
+                <section id="section-positions" class="section">
+                    <div class="card">
+                        <h3>Posicoes Abertas</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Par</th><th>Direcao</th><th>Volume</th><th>Preco</th><th>Lucro</th><th>SL</th><th>TP</th></tr></thead>
+                                <tbody id="positionsTable"><tr><td colspan="7" class="text-center text-dim">Nenhuma posicao</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <section id="section-history" class="section">
+                    <div class="card">
+                        <h3>Historico</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Data</th><th>Par</th><th>Direcao</th><th>Lot</th><th>Lucro</th></tr></thead>
+                                <tbody id="historyTable"><tr><td colspan="5" class="text-center text-dim">Nenhuma operacao</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <section id="section-license" class="section">
+                    <div class="card">
+                        <h3>Minha Licenca</h3>
+                        <div class="license-info">
+                            <div class="form-group">
+                                <label>Chave de Licenca</label>
+                                <input type="text" id="licenseKey" readonly style="font-size:18px;font-weight:700;color:var(--orange);text-align:center;letter-spacing:2px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Valida ate</label>
+                                <input type="text" id="licenseExpires" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <div id="licenseStatus"></div>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning" style="margin-top:15px;">
+                            Para renovar, efetue o pagamento de R$ 49,90 e envie o comprovante.
+                        </div>
+                    </div>
+                </section>
+                <section id="section-connect" class="section">
+                    <div class="card">
+                        <h3>Minha Conta MT5</h3>
+                        <p class="text-dim">Vincule sua conta MT5</p>
+                        <div id="mt5ConnectedSection" style="display:none;">
+                            <div class="alert alert-success" id="mt5ConnectedInfo"></div>
+                            <button class="btn btn-danger" onclick="disconnectMT5()">Desvincular</button>
+                        </div>
+                        <div id="mt5DisconnectedSection">
+                            <div class="form-group"><label>Conta MT5</label><input type="text" id="mt5Account" placeholder="Ex: 26006210"></div>
+                            <div class="form-group"><label>Servidor</label><input type="text" id="mt5Server" placeholder="Ex: VantageMarkets-Demo"></div>
+                            <button class="btn btn-primary" onclick="connectMT5()">Vincular</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

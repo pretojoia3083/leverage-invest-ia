@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVERAGE INVEST IA - Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <img src="/static/img/logo.png" alt="LEVERAGE INVEST IA">
+            </div>
+            <h1>LEVERAGE INVEST IA</h1>
+            <p class="auth-subtitle">Acesse sua conta</p>
+
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="/login">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <div class="password-field">
+                        <input type="password" name="password" id="password" placeholder="Sua senha" required>
+                        <button type="button" class="eye-btn" onclick="togglePassword()">&#128065;</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Nao tem conta? <a href="/register">Cadastre-se</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function togglePassword() {
+        const field = document.getElementById('password');
+        field.type = field.type === 'password' ? 'text' : 'password';
+    }
+    </script>
+</body>
+</html>

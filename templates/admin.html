@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVERAGE IA - Admin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/img/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/static/img/logo.png" alt="Logo" class="sidebar-logo">
+                <span>LEVERAGE IA</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="clients"><span>&#9783;</span> Clientes</a>
+                <a href="#" class="nav-item" data-section="licenses"><span>&#9830;</span> Licencas</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item logout-btn"><span>&#10550;</span> Sair</a>
+            </div>
+        </aside>
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h2>Painel Admin</h2>
+                </div>
+                <div class="topbar-right">
+                    <span class="user-name">Admin</span>
+                    <div class="status-dot online"></div>
+                </div>
+            </header>
+            <div class="content">
+                <section id="section-clients" class="section active">
+                    <div class="card">
+                        <h3>Clientes Cadastrados</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Conta MT5</th>
+                                        <th>Servidor</th>
+                                        <th>Status</th>
+                                        <th>Acoes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <section id="section-licenses" class="section">
+                    <div class="card">
+                        <h3>Licencas Ativas</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Chave</th>
+                                        <th>Valida ate</th>
+                                        <th>Status</th>
+                                        <th>Acoes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="licensesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script>
+    document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + this.dataset.section).classList.add('active');
+        });
+    });
+
+    async function api(url, method, body) {
+        const opts = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
+        if (body) opts.body = JSON.stringify(body);
+        return (await fetch(url, opts)).json();
+    }
+
+    const users = {{ users | tojson }};
+    const licenses = {{ licenses | tojson }};
+
+    function renderClients() {
+        const tbody = document.getElementById('clientsTable');
+        let html = '';
+        for (const [uid, u] of Object.entries(users)) {
+            const lic = licenses[uid];
+            const licStatus = lic && lic.active ? 'Ativa' : 'Sem licenca';
+            const licClass = lic && lic.active ? 'badge-buy' : 'badge-sell';
+            html += '<tr>' +
+                '<td>' + u.name + '</td>' +
+                '<td>' + u.email + '</td>' +
+                '<td>' + (u.mt5_account || '-') + '</td>' +
+                '<td>' + (u.mt5_server || '-') + '</td>' +
+                '<td><span class="badge ' + licClass + '">' + licStatus + '</span></td>' +
+                '<td>' +
+                    '<button class="btn btn-sm btn-success" onclick="activate(\'' + uid + '\')">Ativar 30d</button> ' +
+                    '<button class="btn btn-sm btn-primary" onclick="renew(\'' + uid + '\')">Renovar</button> ' +
+                    '<button class="btn btn-sm btn-danger" onclick="deactivate(\'' + uid + '\')">Bloquear</button>' +
+                '</td></tr>';
+        }
+        tbody.innerHTML = html || '<tr><td colspan="6" class="text-center text-dim">Nenhum cliente</td></tr>';
+    }
+
+    function renderLicenses() {
+        const tbody = document.getElementById('licensesTable');
+        let html = '';
+        for (const [uid, lic] of Object.entries(licenses)) {
+            const u = users[uid];
+            const expires = new Date(lic.expires_at).toLocaleDateString('pt-BR');
+            const valid = lic.active && new Date(lic.expires_at) > new Date();
+            html += '<tr>' +
+                '<td>' + (u ? u.name : uid) + '</td>' +
+                '<td><code>' + lic.key + '</code></td>' +
+                '<td>' + expires + '</td>' +
+                '<td><span class="badge ' + (valid ? 'badge-buy' : 'badge-sell') + '">' + (valid ? 'VALIDA' : 'EXPIRADA') + '</span></td>' +
+                '<td>' +
+                    '<button class="btn btn-sm btn-primary" onclick="renew(\'' + uid + '\')">Renovar</button> ' +
+                    '<button class="btn btn-sm btn-danger" onclick="deactivate(\'' + uid + '\')">Bloquear</button>' +
+                '</td></tr>';
+        }
+        tbody.innerHTML = html || '<tr><td colspan="5" class="text-center text-dim">Nenhuma licenca</td></tr>';
+    }
+
+    async function activate(uid) {
+        const r = await api('/admin/activate', 'POST', { uid: uid, days: 30 });
+        if (r.status === 'ok') {
+            alert('Licenca ativada!\n\nChave: ' + r.key + '\nValida ate: ' + new Date(r.expires).toLocaleDateString('pt-BR'));
+            location.reload();
+        } else {
+            alert(r.error || 'Erro');
+        }
+    }
+
+    async function renew(uid) {
+        const r = await api('/admin/renew', 'POST', { uid: uid, days: 30 });
+        if (r.status === 'ok') {
+            alert('Renovado ate: ' + new Date(r.expires).toLocaleDateString('pt-BR'));
+            location.reload();
+        }
+    }
+
+    async function deactivate(uid) {
+        if (!confirm('Bloquear este cliente?')) return;
+        await api('/admin/deactivate', 'POST', { uid: uid });
+        location.reload();
+    }
+
+    renderClients();
+    renderLicenses();
+    </script>
+</body>
+</html>
